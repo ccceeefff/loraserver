@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -eo pipefail
+
+export ETCD_PORT=${ETCD_PORT:-2379}
+export HOST_IP=${HOST_IP:-172.17.0.1}
+export ETCD=$HOST_IP:$ETCD_PORT
+
+echo "[lora-network-server] booting container. ETCD: $ETCD"
+
+until confd -onetime -node $ETCD -config-file /etc/confd/conf.d/lora-network-server.toml; do
+	echo "[lora-network-server] waiting for confd to create initial server configuation"
+	sleep 5
+done
+
+confd -interval 10 -node $ETCD -config-file /etc/confd/conf.d/lora-network-server.toml &
+echo "[lora-network-server] confd is now monitoring etcd for changes"
+
+# start the server
+/usr/local/bin/start_lora_server.sh
+
+# wait for startup
+sleep 5
+
+# tail the logs to keep running
+tail -f /var/log/lora-network-server/lora-network-server.log

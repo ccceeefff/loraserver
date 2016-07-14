@@ -1,0 +1,11 @@
+[template]
+
+src = "lora-network-server.tmpl"
+dest = "/etc/lora/networkserver.env"
+
+keys = [ "/services/mqtt/gateway", "/services/mqtt/application", "/services/postgres", "/services/redis"]
+
+owner = "root"
+mode = "0644"
+
+reload_cmd = "/usr/local/bin/start_lora_server.sh"
