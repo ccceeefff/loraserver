@@ -67,6 +67,7 @@ func run(c *cli.Context) {
 
 	// setup redis pool
 	log.Info("setup redis connection pool")
+	log.Info(c.String("redis-url"))
 	rp := loraserver.NewRedisPool(c.String("redis-url"))
 
 	// setup gateway backend
